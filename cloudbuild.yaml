@@ -3,6 +3,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
+      '-f', 'Dockerfile.simple',
       '-t', 'gcr.io/naebak-472518/naebak-frontend:latest',
       '-t', 'gcr.io/naebak-472518/naebak-frontend:$BUILD_ID',
       '.'
