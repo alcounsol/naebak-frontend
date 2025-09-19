@@ -1,103 +1,272 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import {
+  Box,
+  Container,
+  Typography,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Chip,
+  Stack,
+  Paper,
+} from '@mui/material';
+import {
+  AccountBalance,
+  People,
+  Message,
+  TrendingUp,
+  Security,
+  Speed,
+  ArrowBack,
+} from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { dataAPI } from '@/lib/api';
+
+interface Statistics {
+  total_users: number;
+  total_candidates: number;
+  total_messages: number;
+  total_issues: number;
+  resolved_issues: number;
+  active_users: number;
+}
+
+export default function HomePage() {
+  const router = useRouter();
+  const [stats, setStats] = useState<Statistics | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await dataAPI.getStatistics();
+        setStats(response.data);
+      } catch (error) {
+        console.error('Failed to fetch statistics:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const features = [
+    {
+      icon: <AccountBalance sx={{ fontSize: 40, color: 'primary.main' }} />,
+      title: 'تواصل مع النواب',
+      description: 'تواصل مباشر مع نوابك ومرشحيك في البرلمان المصري',
+    },
+    {
+      icon: <Message sx={{ fontSize: 40, color: 'primary.main' }} />,
+      title: 'رسائل قصيرة',
+      description: 'أرسل رسائل قصيرة (حتى 500 حرف) للتعبير عن آرائك ومقترحاتك',
+    },
+    {
+      icon: <People sx={{ fontSize: 40, color: 'primary.main' }} />,
+      title: 'مشاكل مفصلة',
+      description: 'اكتب مشاكل مفصلة (حتى 1500 حرف) مع إمكانية إرفاق ملفات',
+    },
+    {
+      icon: <TrendingUp sx={{ fontSize: 40, color: 'primary.main' }} />,
+      title: 'تقييم النواب',
+      description: 'نظام تقييم علني وشفاف لأداء النواب والمرشحين',
+    },
+    {
+      icon: <Security sx={{ fontSize: 40, color: 'primary.main' }} />,
+      title: 'أمان وخصوصية',
+      description: 'حماية كاملة لبياناتك الشخصية مع أعلى معايير الأمان',
+    },
+    {
+      icon: <Speed sx={{ fontSize: 40, color: 'primary.main' }} />,
+      title: 'استجابة سريعة',
+      description: 'نظام ذكي لتوجيه المشاكل والحصول على ردود سريعة',
+    },
+  ];
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <Box>
+      {/* Hero Section */}
+      <Box
+        sx={{
+          background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+          color: 'white',
+          py: 8,
+          textAlign: 'center',
+        }}
+      >
+        <Container maxWidth="lg">
+          <Typography variant="h1" component="h1" gutterBottom>
+            مرحباً بك في نائبك.كوم
+          </Typography>
+          <Typography variant="h5" component="h2" sx={{ mb: 4, opacity: 0.9 }}>
+            منصة تربط المواطنين بالنواب والمرشحين في مصر
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
+            شارك في الحياة السياسية، تواصل مع نوابك، وساهم في بناء مصر أفضل من خلال منصة آمنة وشفافة
+          </Typography>
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Button
+              variant="contained"
+              size="large"
+              sx={{
+                bgcolor: 'white',
+                color: 'primary.main',
+                '&:hover': { bgcolor: 'grey.100' },
+              }}
+              onClick={() => router.push('/auth/register')}
+            >
+              ابدأ الآن
+            </Button>
+            <Button
+              variant="outlined"
+              size="large"
+              sx={{
+                borderColor: 'white',
+                color: 'white',
+                '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' },
+              }}
+              onClick={() => router.push('/candidates')}
+            >
+              تصفح المرشحين
+            </Button>
+          </Stack>
+        </Container>
+      </Box>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      {/* Statistics Section */}
+      {stats && (
+        <Box sx={{ py: 6, bgcolor: 'grey.50' }}>
+          <Container maxWidth="lg">
+            <Typography variant="h4" component="h2" textAlign="center" gutterBottom>
+              إحصائيات المنصة
+            </Typography>
+            <Grid container spacing={3} sx={{ mt: 2 }}>
+              <Grid item xs={12} sm={6} md={3}>
+                <Paper sx={{ p: 3, textAlign: 'center' }}>
+                  <Typography variant="h3" color="primary.main" gutterBottom>
+                    {stats.total_users.toLocaleString()}
+                  </Typography>
+                  <Typography variant="body1">مستخدم مسجل</Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Paper sx={{ p: 3, textAlign: 'center' }}>
+                  <Typography variant="h3" color="primary.main" gutterBottom>
+                    {stats.total_candidates.toLocaleString()}
+                  </Typography>
+                  <Typography variant="body1">مرشح ونائب</Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Paper sx={{ p: 3, textAlign: 'center' }}>
+                  <Typography variant="h3" color="primary.main" gutterBottom>
+                    {stats.total_messages.toLocaleString()}
+                  </Typography>
+                  <Typography variant="body1">رسالة مرسلة</Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Paper sx={{ p: 3, textAlign: 'center' }}>
+                  <Typography variant="h3" color="primary.main" gutterBottom>
+                    {stats.resolved_issues.toLocaleString()}
+                  </Typography>
+                  <Typography variant="body1">مشكلة تم حلها</Typography>
+                </Paper>
+              </Grid>
+            </Grid>
+          </Container>
+        </Box>
+      )}
+
+      {/* Features Section */}
+      <Box sx={{ py: 8 }}>
+        <Container maxWidth="lg">
+          <Typography variant="h4" component="h2" textAlign="center" gutterBottom>
+            لماذا نائبك.كوم؟
+          </Typography>
+          <Typography
+            variant="body1"
+            textAlign="center"
+            sx={{ mb: 6, maxWidth: 600, mx: 'auto' }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            منصة شاملة تجمع بين السهولة والأمان لتعزيز التواصل بين المواطنين ومسؤوليهم
+          </Typography>
+          <Grid container spacing={4}>
+            {features.map((feature, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card sx={{ height: '100%', textAlign: 'center' }}>
+                  <CardContent sx={{ p: 3 }}>
+                    <Box sx={{ mb: 2 }}>{feature.icon}</Box>
+                    <Typography variant="h6" component="h3" gutterBottom>
+                      {feature.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {feature.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* CTA Section */}
+      <Box sx={{ py: 8, bgcolor: 'primary.main', color: 'white', textAlign: 'center' }}>
+        <Container maxWidth="md">
+          <Typography variant="h4" component="h2" gutterBottom>
+            انضم إلى آلاف المواطنين
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 4 }}>
+            كن جزءاً من التغيير الإيجابي في مصر. سجل الآن وابدأ التواصل مع نوابك
+          </Typography>
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Button
+              variant="contained"
+              size="large"
+              sx={{
+                bgcolor: 'white',
+                color: 'primary.main',
+                '&:hover': { bgcolor: 'grey.100' },
+              }}
+              onClick={() => router.push('/auth/register')}
+            >
+              إنشاء حساب جديد
+            </Button>
+            <Button
+              variant="outlined"
+              size="large"
+              sx={{
+                borderColor: 'white',
+                color: 'white',
+                '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' },
+              }}
+              onClick={() => router.push('/auth/login')}
+            >
+              تسجيل الدخول
+            </Button>
+          </Stack>
+        </Container>
+      </Box>
+
+      {/* Footer */}
+      <Box sx={{ py: 4, bgcolor: 'grey.900', color: 'white', textAlign: 'center' }}>
+        <Container maxWidth="lg">
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            © 2025 نائبك.كوم - جميع الحقوق محفوظة
+          </Typography>
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Chip label="الخصوصية" variant="outlined" sx={{ color: 'white', borderColor: 'white' }} />
+            <Chip label="الشروط والأحكام" variant="outlined" sx={{ color: 'white', borderColor: 'white' }} />
+            <Chip label="اتصل بنا" variant="outlined" sx={{ color: 'white', borderColor: 'white' }} />
+          </Stack>
+        </Container>
+      </Box>
+    </Box>
   );
 }
